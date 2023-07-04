@@ -1,0 +1,8 @@
+Website = "https://github.com/streamdp/modeswitch"
+
+[Details]
+  Icon = "Icon.png"
+  Name = "Keenetic Mode Switch"
+  ID = "com.streamdp.modeswitch"
+  Version = "0.0.1"
+  Build = 25

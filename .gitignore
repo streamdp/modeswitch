@@ -1,0 +1,5 @@
+.idea/
+fyne-cross/
+tmp-pkg/
+*.apk
+*.tar.gz
