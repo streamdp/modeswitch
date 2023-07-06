@@ -11,8 +11,8 @@ const (
 )
 
 var Size = fyne.Size{
-	Width:  480,
-	Height: 720,
+	Width:  240,
+	Height: 480,
 }
 
 type UserConfig struct {

@@ -61,6 +61,9 @@ func switchTo(mode string, a fyne.App) (_ string, err error) {
 	if err = c.Load(a); err != nil {
 		return
 	}
+	if c.Host == "" || c.Port == "" || c.InterfaceId == "" {
+		return "", fmt.Errorf("you need to configure the app first.\n specify host, port, interface id at least")
+	}
 	if err = sendCommand(mode, c); err != nil {
 		return
 	}

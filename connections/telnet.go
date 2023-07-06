@@ -1,10 +1,7 @@
 package connections
 
 import (
-	"bufio"
 	"fmt"
-	"log"
-	"os"
 	"regexp"
 	"time"
 
@@ -19,10 +16,6 @@ func SendTelnetCommand(mode string, c *config.UserConfig) (err error) {
 		Login:    c.UserName,
 		Password: c.Password,
 		Timeout:  5 * time.Second,
-		Verbose:  true,
-		LogWriter: bufio.NewWriter(
-			log.New(os.Stdout, "", log.Ldate|log.Ltime|log.Llongfile).Writer(),
-		),
 
 		Delimiter: ':',
 		LoginRe:   regexp.MustCompile("Login:"),
