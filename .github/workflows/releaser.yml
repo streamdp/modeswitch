@@ -1,0 +1,27 @@
+name: releaser
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    steps:
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.20.1'
+      - name: Get dependencies
+        run: sudo apt-get update && sudo apt-get install gcc libegl1-mesa-dev libgles2-mesa-dev libx11-dev xorg-dev
+      - name: Get fyne-cross
+        run: go install github.com/fyne-io/fyne-cross@latest
+      - name: Build android app
+        run: fyne-cross package android
+      - uses: actions/checkout@v3.3.0
+      - uses: ncipollo/release-action@v1.12.0
+        with:
+          artifacts: "./fyne-cross/bin/android/*"
