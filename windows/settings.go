@@ -76,7 +76,7 @@ func CreateSettingsWindow(a fyne.App) (w fyne.Window) {
 		if err := c.Save(a); err != nil {
 			dialog.ShowError(err, w)
 		}
-		dialog.ShowInformation("Settings Saved", "Connection preferences and credentials have been saved.", w)
+		dialog.ShowInformation("Settings Saved", "Settings have been saved.", w)
 	})
 
 	w.SetContent(

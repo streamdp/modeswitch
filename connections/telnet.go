@@ -17,9 +17,8 @@ func SendTelnetCommand(mode string, c *config.UserConfig) (err error) {
 		Password: c.Password,
 		Timeout:  5 * time.Second,
 
-		Delimiter: ':',
-		LoginRe:   regexp.MustCompile("Login:"),
-		BannerRe:  regexp.MustCompile("\\(config\\)>"),
+		LoginRe:  regexp.MustCompile("Login:"),
+		BannerRe: regexp.MustCompile("\\(config\\)>"),
 	}
 
 	if err = cli.Dial(); err != nil {
@@ -33,10 +32,10 @@ func SendTelnetCommand(mode string, c *config.UserConfig) (err error) {
 		init = c.InitUmts
 	}
 
-	if _, err = cli.Execute("interface %s lte init %s", c.InterfaceId, init); err != nil {
+	if _, err = cli.Execute(fmt.Sprintf("interface %s lte init %s", c.InterfaceId, init)); err != nil {
 		return
 	}
-	if _, err = cli.Execute("interface %s usb acq %s", c.InterfaceId, mode); err != nil {
+	if _, err = cli.Execute(fmt.Sprintf("interface %s usb acq %s", c.InterfaceId, mode)); err != nil {
 		return
 	}
 

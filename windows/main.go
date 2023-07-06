@@ -19,6 +19,7 @@ func CreateMainWindow(a fyne.App) (w fyne.Window) {
 	w.Resize(config.Size)
 
 	outputMemo := widget.NewMultiLineEntry()
+	outputMemo.Wrapping = fyne.TextWrapWord
 
 	switchToLteButton := widget.NewButton("Switch to LTE", func() {
 		go func() {
@@ -67,7 +68,8 @@ func switchTo(mode string, a fyne.App) (_ string, err error) {
 	if err = sendCommand(mode, c); err != nil {
 		return
 	}
-	return fmt.Sprintf("commands to switch %s mode were sent successfully", mode), nil
+	return fmt.Sprintf("commands to switch %s mode were sent successfully. wait few minutes, and check internet"+
+		" connection.", mode), nil
 }
 
 func sendCommand(mode string, c *config.UserConfig) (err error) {
