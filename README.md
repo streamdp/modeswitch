@@ -6,13 +6,7 @@ frozen at version 2.16.D.12.0-8, for example Keenetic LTE. This app just sends t
 to the router.
 
 ## Build
-You need to install [Fyne](https://developer.fyne.io/started/). This is an easy to learn, free and open source, 
-platform for building graphical applications for desktop, mobile and beyond.
-```bash
-$ go get fyne.io/fyne/v2@latest
-$ go install fyne.io/fyne/v2/cmd/fyne@latest
-```
-and [fyne-cross](https://github.com/fyne-io/fyne-cross). fyne-cross is a simple tool to cross compile and create 
+You need to install [fyne-cross](https://github.com/fyne-io/fyne-cross). fyne-cross is a simple tool to cross compile and create 
 distribution packages for Fyne applications using docker images.
 ```bash
 $ go install github.com/fyne-io/fyne-cross@latest
