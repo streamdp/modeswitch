@@ -106,7 +106,7 @@ func TestConstants(t *testing.T) {
 	assert.Equal(t, UMTS, "umts")
 	assert.Equal(t, LTE, "lte")
 	assert.Equal(t, Size, fyne.Size{
-		Width:  480,
-		Height: 720,
+		Width:  240,
+		Height: 480,
 	})
 }
