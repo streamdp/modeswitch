@@ -1,5 +1,5 @@
 default:
-	fyne-cross android -image fyneio/fyne-cross-images:v1.2.0-android -no-cache
+	fyne-cross android -image fyneio/fyne-cross-images:v1.2.0-android
 
 clean:
 	rm -rf *.apk

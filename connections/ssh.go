@@ -3,7 +3,6 @@ package connections
 import (
 	"fmt"
 	"net"
-	"time"
 
 	"github.com/helloyi/go-sshclient"
 	"github.com/streamdp/modeswitch/config"
@@ -20,7 +19,7 @@ func SendSshCommand(mode string, c *config.UserConfig) (err error) {
 			ssh.Password(c.Password),
 		},
 		HostKeyCallback: func(hostname string, remote net.Addr, key ssh.PublicKey) error { return nil },
-		Timeout:         5 * time.Second,
+		Timeout:         config.DefaultTimeout,
 	}); err != nil {
 		return
 	}

@@ -7,8 +7,9 @@ toolchain go1.24.1
 require (
 	fyne.io/fyne/v2 v2.5.5
 	github.com/helloyi/go-sshclient v1.2.0
-	github.com/streamdp/telnet-client v0.0.2
+	github.com/streamdp/telnet-client v0.1.0
 	github.com/stretchr/testify v1.10.0
+	golang.org/x/crypto v0.36.0
 )
 
 require (
@@ -39,7 +40,6 @@ require (
 	github.com/srwiley/oksvg v0.0.0-20221011165216-be6e8873101c // indirect
 	github.com/srwiley/rasterx v0.0.0-20220730225603-2ab79fcdd4ef // indirect
 	github.com/yuin/goldmark v1.7.8 // indirect
-	golang.org/x/crypto v0.36.0 // indirect
 	golang.org/x/image v0.25.0 // indirect
 	golang.org/x/mobile v0.0.0-20250305212854-3a7bc9f8a4de // indirect
 	golang.org/x/net v0.38.0 // indirect

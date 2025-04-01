@@ -1,6 +1,8 @@
 package config
 
 import (
+	"time"
+
 	"fyne.io/fyne/v2"
 	"github.com/streamdp/modeswitch/encryption"
 )
@@ -8,6 +10,8 @@ import (
 const (
 	UMTS = "umts"
 	LTE  = "lte"
+
+	DefaultTimeout = 5 * time.Second
 )
 
 var Size = fyne.Size{
@@ -26,34 +30,34 @@ type UserConfig struct {
 	InitUmts    string `json:"init_umts"`
 }
 
-func (s *UserConfig) Save(a fyne.App) (err error) {
-	a.Preferences().SetString("host", s.Host)
-	a.Preferences().SetString("port", s.Port)
-	a.Preferences().SetBool("is_ssh", s.IsSsh)
-	a.Preferences().SetString("username", s.UserName)
+func (uc *UserConfig) Save(a fyne.App) (err error) {
+	a.Preferences().SetString("host", uc.Host)
+	a.Preferences().SetString("port", uc.Port)
+	a.Preferences().SetBool("is_ssh", uc.IsSsh)
+	a.Preferences().SetString("username", uc.UserName)
 	var password string
-	if password, err = encryption.Encrypt(s.Password, s.UserName); err != nil {
+	if password, err = encryption.Encrypt(uc.Password, uc.UserName); err != nil {
 		return
 	}
 	a.Preferences().SetString("password", password)
-	a.Preferences().SetString("init_lte", s.InitLte)
-	a.Preferences().SetString("init_umts", s.InitUmts)
-	a.Preferences().SetString("interface_id", s.InterfaceId)
+	a.Preferences().SetString("init_lte", uc.InitLte)
+	a.Preferences().SetString("init_umts", uc.InitUmts)
+	a.Preferences().SetString("interface_id", uc.InterfaceId)
 	return
 }
 
-func (s *UserConfig) Load(a fyne.App) (err error) {
-	s.UserName = a.Preferences().String("username")
+func (uc *UserConfig) Load(a fyne.App) (err error) {
+	uc.UserName = a.Preferences().String("username")
 	var password = a.Preferences().String("password")
-	if password, err = encryption.Decrypt(password, s.UserName); err != nil {
+	if password, err = encryption.Decrypt(password, uc.UserName); err != nil {
 		return
 	}
-	s.Password = password
-	s.Host = a.Preferences().String("host")
-	s.Port = a.Preferences().String("port")
-	s.IsSsh = a.Preferences().Bool("is_ssh")
-	s.InitLte = a.Preferences().String("init_lte")
-	s.InitUmts = a.Preferences().String("init_umts")
-	s.InterfaceId = a.Preferences().String("interface_id")
+	uc.Password = password
+	uc.Host = a.Preferences().String("host")
+	uc.Port = a.Preferences().String("port")
+	uc.IsSsh = a.Preferences().Bool("is_ssh")
+	uc.InitLte = a.Preferences().String("init_lte")
+	uc.InitUmts = a.Preferences().String("init_umts")
+	uc.InterfaceId = a.Preferences().String("interface_id")
 	return nil
 }

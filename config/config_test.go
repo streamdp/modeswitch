@@ -1,12 +1,13 @@
 package config
 
 import (
+	"strconv"
+	"testing"
+
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"github.com/streamdp/modeswitch/encryption"
 	"github.com/stretchr/testify/assert"
-	"strconv"
-	"testing"
 )
 
 func TestUserConfig_Save(t *testing.T) {

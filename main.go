@@ -7,7 +7,8 @@ import (
 
 func main() {
 	a := app.New()
-	w := windows.CreateMainWindow(a)
-	w.SetMainMenu(windows.CreateMainMenu(a))
-	w.ShowAndRun()
+
+	m := windows.NewMainWindow(a).Create()
+	m.SetMainMenu(windows.CreateMainMenu(a))
+	m.ShowAndRun()
 }

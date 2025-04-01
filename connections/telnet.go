@@ -3,7 +3,6 @@ package connections
 import (
 	"fmt"
 	"regexp"
-	"time"
 
 	"github.com/streamdp/modeswitch/config"
 	"github.com/streamdp/telnet-client"
@@ -15,7 +14,9 @@ func SendTelnetCommand(mode string, c *config.UserConfig) (err error) {
 		Port:     c.Port,
 		Login:    c.UserName,
 		Password: c.Password,
-		Timeout:  5 * time.Second,
+
+		ConnTimeout: config.DefaultTimeout,
+		ReadTimeout: config.DefaultTimeout,
 
 		LoginRe:  regexp.MustCompile("Login:"),
 		BannerRe: regexp.MustCompile("\\(config\\)>"),

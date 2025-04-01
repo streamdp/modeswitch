@@ -9,77 +9,92 @@ import (
 	"github.com/streamdp/modeswitch/config"
 )
 
-func CreateSettingsWindow(a fyne.App) (w fyne.Window) {
-	w = a.NewWindow("Settings")
+type SettingsWindow struct {
+	a fyne.App
+	c *config.UserConfig
+	fyne.Window
+}
 
-	w.Resize(config.Size)
+func NewSettingsWindow(a fyne.App) *SettingsWindow {
+	return &SettingsWindow{
+		a: a,
+		c: &config.UserConfig{},
+		Window: func(a fyne.App) fyne.Window {
+			w := a.NewWindow("Settings")
+			w.Resize(config.Size)
+			return w
+		}(a),
+	}
+}
 
-	c := &config.UserConfig{}
-	if err := c.Load(a); err != nil {
-		dialog.ShowError(err, w)
+func (s *SettingsWindow) Create() fyne.Window {
+	if err := s.c.Load(s.a); err != nil {
+		s.showDialogError(err)
+		return s
 	}
 
 	hostEntry := widget.NewEntry()
 	hostEntry.SetPlaceHolder("Enter hostname or IP")
-	if c.Host != "" {
-		hostEntry.SetText(c.Host)
+	if s.c.Host != "" {
+		hostEntry.SetText(s.c.Host)
 	}
 
 	portEntry := widget.NewEntry()
 	portEntry.SetPlaceHolder("Enter port number")
-	if c.Port != "" {
-		portEntry.SetText(c.Port)
+	if s.c.Port != "" {
+		portEntry.SetText(s.c.Port)
 	}
 
 	isSshCheckBox := widget.NewCheck("", nil)
-	isSshCheckBox.Checked = c.IsSsh
+	isSshCheckBox.Checked = s.c.IsSsh
 
 	usernameEntry := widget.NewEntry()
 	usernameEntry.SetPlaceHolder("Enter username")
-	if c.UserName != "" {
-		usernameEntry.SetText(c.UserName)
+	if s.c.UserName != "" {
+		usernameEntry.SetText(s.c.UserName)
 	}
 
 	passwordEntry := widget.NewPasswordEntry()
 	passwordEntry.SetPlaceHolder("Enter password")
-	if c.Password != "" {
-		passwordEntry.SetText(c.Password)
+	if s.c.Password != "" {
+		passwordEntry.SetText(s.c.Password)
 	}
 
 	interfaceId := widget.NewEntry()
 	interfaceId.SetPlaceHolder("Enter interface Id, such as UsbLte0")
-	if c.InterfaceId != "" {
-		interfaceId.SetText(c.InterfaceId)
+	if s.c.InterfaceId != "" {
+		interfaceId.SetText(s.c.InterfaceId)
 	}
 
 	initLteEntry := widget.NewEntry()
 	initLteEntry.SetPlaceHolder("Enter init string for LTE mode")
-	if c.InitLte != "" {
-		initLteEntry.SetText(c.InitLte)
+	if s.c.InitLte != "" {
+		initLteEntry.SetText(s.c.InitLte)
 	}
 
 	initUmtsEntry := widget.NewEntry()
 	initUmtsEntry.SetPlaceHolder("Enter init string for UMTS mode")
-	if c.InitUmts != "" {
-		initUmtsEntry.SetText(c.InitUmts)
+	if s.c.InitUmts != "" {
+		initUmtsEntry.SetText(s.c.InitUmts)
 	}
 
 	saveButton := widget.NewButton("Save", func() {
-		c.UserName = usernameEntry.Text
-		c.Password = passwordEntry.Text
-		c.IsSsh = isSshCheckBox.Checked
-		c.Host = hostEntry.Text
-		c.Port = portEntry.Text
-		c.InterfaceId = interfaceId.Text
-		c.InitLte = initLteEntry.Text
-		c.InitUmts = initUmtsEntry.Text
-		if err := c.Save(a); err != nil {
-			dialog.ShowError(err, w)
+		s.c.UserName = usernameEntry.Text
+		s.c.Password = passwordEntry.Text
+		s.c.IsSsh = isSshCheckBox.Checked
+		s.c.Host = hostEntry.Text
+		s.c.Port = portEntry.Text
+		s.c.InterfaceId = interfaceId.Text
+		s.c.InitLte = initLteEntry.Text
+		s.c.InitUmts = initUmtsEntry.Text
+		if err := s.c.Save(s.a); err != nil {
+			s.showDialogError(err)
+			return
 		}
-		dialog.ShowInformation("Settings Saved", "Settings have been saved.", w)
+		s.showDialogInfo("Settings Saved", "Settings have been saved.")
 	})
 
-	w.SetContent(
+	s.SetContent(
 		container.NewVBox(
 			container.New(
 				layout.NewFormLayout(),
@@ -104,5 +119,13 @@ func CreateSettingsWindow(a fyne.App) (w fyne.Window) {
 			saveButton,
 		))
 
-	return
+	return s
+}
+
+func (s *SettingsWindow) showDialogError(err error) {
+	dialog.ShowError(err, s)
+}
+
+func (s *SettingsWindow) showDialogInfo(title, msg string) {
+	dialog.ShowInformation(title, msg, s)
 }
