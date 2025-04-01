@@ -2,14 +2,26 @@ package connections
 
 import (
 	"fmt"
+	"net"
+	"time"
 
 	"github.com/helloyi/go-sshclient"
 	"github.com/streamdp/modeswitch/config"
+	"golang.org/x/crypto/ssh"
 )
 
 func SendSshCommand(mode string, c *config.UserConfig) (err error) {
-	var cli *sshclient.Client
-	if cli, err = sshclient.DialWithPasswd(c.Host+":"+c.Port, c.UserName, c.Password); err != nil {
+	var (
+		cli *sshclient.Client
+	)
+	if cli, err = sshclient.Dial("tcp", c.Host+":"+c.Port, &ssh.ClientConfig{
+		User: c.UserName,
+		Auth: []ssh.AuthMethod{
+			ssh.Password(c.Password),
+		},
+		HostKeyCallback: func(hostname string, remote net.Addr, key ssh.PublicKey) error { return nil },
+		Timeout:         5 * time.Second,
+	}); err != nil {
 		return
 	}
 	defer cli.Close()
