@@ -14,11 +14,13 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
-          go-version: '1.20.1'
+          go-version: '1.24.1'
       - name: Get fyne-cross
-        run: go install github.com/fyne-io/fyne-cross@latest
+        run: go install github.com/fyne-io/fyne-cross@v1.6.1
       - name: Build android app
-        run: fyne-cross android
+        env:
+          tag: ${{ github.ref_name }}
+        run: fyne-cross android -image fyneio/fyne-cross-images:v1.2.0-android -app-version "${tag#v}"
       - uses: ncipollo/release-action@v1.12.0
         with:
           artifacts: "./fyne-cross/dist/android/*"
