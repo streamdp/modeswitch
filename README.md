@@ -19,7 +19,7 @@ if you want to build application for other platform use the next command:
 ```bash
 $ fyne-cross target
 ```
-where the target is one of the several platforms such as darwin, linux, windows, android, ios, freebsd, web.
+where the target is one of the several platforms such as **darwin**, **linux**, **windows**, **android**, **ios**, **freebsd**, **web**.
 ## Run
 Transfer _./fyne-cross/dist/android/_**Keenetic_Mode_Switch.apk** to the android smartphone and use it after installation.
 
