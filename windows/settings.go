@@ -95,29 +95,33 @@ func (s *SettingsWindow) Create() fyne.Window {
 	})
 
 	s.SetContent(
-		container.NewVBox(
-			container.New(
-				layout.NewFormLayout(),
-				widget.NewLabel("Host:"),
-				hostEntry,
-				widget.NewLabel("Port:"),
-				portEntry,
-				widget.NewLabel("Ssh:"),
-				isSshCheckBox,
-				widget.NewLabel("Username:"),
-				usernameEntry,
-				widget.NewLabel("Password:"),
-				passwordEntry,
-				widget.NewLabel("Interface"),
-				interfaceId,
-				widget.NewLabel("init LTE:"),
-				initLteEntry,
-				widget.NewLabel("init UMTS:"),
-				initUmtsEntry,
+		container.NewVScroll(
+			container.NewGridWithRows(2,
+				container.New(
+					layout.NewFormLayout(),
+					widget.NewLabel("Host:"),
+					hostEntry,
+					widget.NewLabel("Port:"),
+					portEntry,
+					widget.NewLabel("Ssh:"),
+					isSshCheckBox,
+					widget.NewLabel("Username:"),
+					usernameEntry,
+					widget.NewLabel("Password:"),
+					passwordEntry,
+					widget.NewLabel("Interface"),
+					interfaceId,
+					widget.NewLabel("init LTE:"),
+					initLteEntry,
+					widget.NewLabel("init UMTS:"),
+					initUmtsEntry,
+				),
+				container.NewCenter(
+					saveButton,
+				),
 			),
-			layout.NewSpacer(),
-			saveButton,
-		))
+		),
+	)
 
 	return s
 }

@@ -36,21 +36,26 @@ func NewMainWindow(a fyne.App) *MainWindow {
 func (m *MainWindow) Create() fyne.Window {
 	outputMemo := widget.NewMultiLineEntry()
 	outputMemo.Wrapping = fyne.TextWrapWord
+	outputMemo.Disable()
 
 	switchToLteButton := widget.NewButton("Switch to LTE", m.switchButtonFn(config.LTE, outputMemo))
 	switchToUMTSButton := widget.NewButton("Switch to UMTS", m.switchButtonFn(config.UMTS, outputMemo))
 
-	m.SetContent(container.NewVBox(
-		layout.NewSpacer(),
-		switchToLteButton,
-		switchToUMTSButton,
-		layout.NewSpacer(),
-		widget.NewButton("Quit", func() {
-			m.Close()
-			os.Exit(0)
-		}),
-		layout.NewSpacer(),
-		outputMemo,
+	m.SetContent(container.NewVSplit(
+		container.NewGridWithRows(4,
+			layout.NewSpacer(),
+			container.NewGridWithColumns(2,
+				switchToLteButton,
+				switchToUMTSButton,
+			),
+			layout.NewSpacer(),
+			container.NewCenter(
+				widget.NewButton("Quit", func() {
+					m.Close()
+					os.Exit(0)
+				})),
+		),
+		container.NewStack(outputMemo),
 	))
 
 	return m
