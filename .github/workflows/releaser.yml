@@ -3,7 +3,6 @@ on:
   push:
     tags:
       - '*'
-
 jobs:
   build:
     runs-on: ubuntu-22.04
@@ -14,13 +13,15 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
-          go-version: '1.24.1'
+          go-version: '1.24.2'
       - name: Get fyne-cross
         run: go install github.com/fyne-io/fyne-cross@v1.6.1
       - name: Build android app
         env:
           tag: ${{ github.ref_name }}
         run: fyne-cross android -image fyneio/fyne-cross-images:v1.2.0-android -app-version "${tag#v}"
-      - uses: ncipollo/release-action@v1.12.0
-        with:
-          artifacts: "./fyne-cross/dist/android/*"
+      - name: Release pushed tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ github.ref_name }}
+        run: gh release create "$tag" --repo="$GITHUB_REPOSITORY" --title="${tag#v}" --generate-notes ./fyne-cross/dist/android/*.apk
