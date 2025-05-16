@@ -2,6 +2,8 @@ package encryption
 
 import (
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+
 	"strconv"
 	"testing"
 )
@@ -24,7 +26,6 @@ func TestBuildSecret(t *testing.T) {
 	}
 
 	for n, tt := range testCases {
-		tt := tt
 		t.Run(strconv.Itoa(n), func(t *testing.T) {
 			assert.Equal(t, tt.secret, buildSecret(tt.username))
 		})
@@ -51,10 +52,9 @@ func TestDecode(t *testing.T) {
 	}
 
 	for n, tt := range testCases {
-		tt := tt
 		t.Run(strconv.Itoa(n), func(t *testing.T) {
 			decoded, err := decode(tt.text)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.Equal(t, tt.expected, string(decoded))
 		})
 	}
@@ -76,14 +76,13 @@ func TestEncrypt(t *testing.T) {
 	}
 
 	for n, tt := range testCases {
-		tt := tt
 		t.Run(strconv.Itoa(n), func(t *testing.T) {
 			encryptedPassword, err := Encrypt(tt.password, tt.username)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.NotEqual(t, tt.password, encryptedPassword)
 
 			decryptedPassword, err := Decrypt(encryptedPassword, tt.username)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.Equal(t, tt.password, decryptedPassword)
 		})
 	}
@@ -113,10 +112,9 @@ func TestDecrypt(t *testing.T) {
 	}
 
 	for n, tt := range testCases {
-		tt := tt
 		t.Run(strconv.Itoa(n), func(t *testing.T) {
 			decryptedPassword, err := Decrypt(tt.encryptedPassword, tt.username)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 			assert.Equal(t, tt.decryptedPassword, decryptedPassword)
 		})
 	}

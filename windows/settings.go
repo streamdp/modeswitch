@@ -4,6 +4,7 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/dialog"
+	"fyne.io/fyne/v2/lang"
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/widget"
 	"github.com/streamdp/modeswitch/config"
@@ -20,27 +21,29 @@ func NewSettingsWindow(a fyne.App) *SettingsWindow {
 		a: a,
 		c: &config.UserConfig{},
 		Window: func(a fyne.App) fyne.Window {
-			w := a.NewWindow("Settings")
+			w := a.NewWindow(lang.L("Settings"))
 			w.Resize(config.Size)
+
 			return w
 		}(a),
 	}
 }
 
-func (s *SettingsWindow) Create() fyne.Window {
+func (s *SettingsWindow) Create() *SettingsWindow {
 	if err := s.c.Load(s.a); err != nil {
 		s.showDialogError(err)
+
 		return s
 	}
 
 	hostEntry := widget.NewEntry()
-	hostEntry.SetPlaceHolder("Enter hostname or IP")
+	hostEntry.SetPlaceHolder(lang.L("Enter hostname or IP"))
 	if s.c.Host != "" {
 		hostEntry.SetText(s.c.Host)
 	}
 
 	portEntry := widget.NewEntry()
-	portEntry.SetPlaceHolder("Enter port number")
+	portEntry.SetPlaceHolder(lang.L("Enter port number"))
 	if s.c.Port != "" {
 		portEntry.SetText(s.c.Port)
 	}
@@ -49,36 +52,36 @@ func (s *SettingsWindow) Create() fyne.Window {
 	isSshCheckBox.Checked = s.c.IsSsh
 
 	usernameEntry := widget.NewEntry()
-	usernameEntry.SetPlaceHolder("Enter username")
+	usernameEntry.SetPlaceHolder(lang.L("Enter username"))
 	if s.c.UserName != "" {
 		usernameEntry.SetText(s.c.UserName)
 	}
 
 	passwordEntry := widget.NewPasswordEntry()
-	passwordEntry.SetPlaceHolder("Enter password")
+	passwordEntry.SetPlaceHolder(lang.L("Enter password"))
 	if s.c.Password != "" {
 		passwordEntry.SetText(s.c.Password)
 	}
 
 	interfaceId := widget.NewEntry()
-	interfaceId.SetPlaceHolder("Enter interface Id, such as UsbLte0")
+	interfaceId.SetPlaceHolder(lang.L("Enter interface Id, such as UsbLte0"))
 	if s.c.InterfaceId != "" {
 		interfaceId.SetText(s.c.InterfaceId)
 	}
 
 	initLteEntry := widget.NewEntry()
-	initLteEntry.SetPlaceHolder("Enter init string for LTE mode")
+	initLteEntry.SetPlaceHolder(lang.L("Enter init string for LTE mode"))
 	if s.c.InitLte != "" {
 		initLteEntry.SetText(s.c.InitLte)
 	}
 
 	initUmtsEntry := widget.NewEntry()
-	initUmtsEntry.SetPlaceHolder("Enter init string for UMTS mode")
+	initUmtsEntry.SetPlaceHolder(lang.L("Enter init string for UMTS mode"))
 	if s.c.InitUmts != "" {
 		initUmtsEntry.SetText(s.c.InitUmts)
 	}
 
-	saveButton := widget.NewButton("Save", func() {
+	saveButton := widget.NewButton(lang.L("Save"), func() {
 		s.c.UserName = usernameEntry.Text
 		s.c.Password = passwordEntry.Text
 		s.c.IsSsh = isSshCheckBox.Checked
@@ -89,9 +92,10 @@ func (s *SettingsWindow) Create() fyne.Window {
 		s.c.InitUmts = initUmtsEntry.Text
 		if err := s.c.Save(s.a); err != nil {
 			s.showDialogError(err)
+
 			return
 		}
-		s.showDialogInfo("Settings Saved", "Settings have been saved.")
+		s.showDialogInfo(lang.L("Settings Saved"), lang.L("Settings have been saved"))
 	})
 
 	s.SetContent(
@@ -99,21 +103,21 @@ func (s *SettingsWindow) Create() fyne.Window {
 			container.NewGridWithRows(2,
 				container.New(
 					layout.NewFormLayout(),
-					widget.NewLabel("Host:"),
+					widget.NewLabel(lang.L("Host")+":"),
 					hostEntry,
-					widget.NewLabel("Port:"),
+					widget.NewLabel(lang.L("Port")+":"),
 					portEntry,
-					widget.NewLabel("Ssh:"),
+					widget.NewLabel(lang.L("Ssh")+":"),
 					isSshCheckBox,
-					widget.NewLabel("Username:"),
+					widget.NewLabel(lang.L("Username")+":"),
 					usernameEntry,
-					widget.NewLabel("Password:"),
+					widget.NewLabel(lang.L("Password")+":"),
 					passwordEntry,
-					widget.NewLabel("Interface"),
+					widget.NewLabel(lang.L("Interface")+":"),
 					interfaceId,
-					widget.NewLabel("init LTE:"),
+					widget.NewLabel(lang.L("Init LTE")+":"),
 					initLteEntry,
-					widget.NewLabel("init UMTS:"),
+					widget.NewLabel(lang.L("Init UMTS")+":"),
 					initUmtsEntry,
 				),
 				container.NewCenter(

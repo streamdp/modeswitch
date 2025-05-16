@@ -9,21 +9,21 @@ import (
 	"golang.org/x/crypto/ssh"
 )
 
-func SendSshCommand(mode string, c *config.UserConfig) (err error) {
-	var (
-		cli *sshclient.Client
-	)
-	if cli, err = sshclient.Dial("tcp", c.Host+":"+c.Port, &ssh.ClientConfig{
+func SendSshCommand(mode string, c *config.UserConfig) error {
+	cli, err := sshclient.Dial("tcp", c.Host+":"+c.Port, &ssh.ClientConfig{
 		User: c.UserName,
 		Auth: []ssh.AuthMethod{
 			ssh.Password(c.Password),
 		},
 		HostKeyCallback: func(hostname string, remote net.Addr, key ssh.PublicKey) error { return nil },
 		Timeout:         config.DefaultTimeout,
-	}); err != nil {
-		return
+	})
+	if err != nil {
+		return err
 	}
-	defer cli.Close()
+	defer func(cli *sshclient.Client) {
+		_ = cli.Close()
+	}(cli)
 
 	var init = c.InitLte
 	if mode == config.UMTS {
@@ -32,8 +32,8 @@ func SendSshCommand(mode string, c *config.UserConfig) (err error) {
 
 	if err = cli.Cmd(fmt.Sprintf("interface %s lte init %s", c.InterfaceId, init)).
 		Cmd(fmt.Sprintf("interface %s usb acq %s", c.InterfaceId, mode)).Run(); err != nil {
-		return
+		return err
 	}
 
-	return
+	return nil
 }
