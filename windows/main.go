@@ -64,7 +64,7 @@ func (m *MainWindow) Create() *MainWindow {
 
 func (m *MainWindow) switchButtonFn(mode string, output *widget.Entry) func() {
 	return func() {
-		output.SetText(lang.L("load config...") + "\n")
+		output.SetText(lang.L("load config") + "...\n")
 
 		if err := m.c.Load(m.a); err != nil {
 			output.Append(lang.L("load config error") + ": " + err.Error())
@@ -81,7 +81,7 @@ func (m *MainWindow) switchButtonFn(mode string, output *widget.Entry) func() {
 			return
 		}
 
-		output.Append(lang.L("trying to connect...") + "\n")
+		output.Append(lang.L("trying to connect") + "...\n")
 		go fyne.Do(func() {
 			if err := m.sendCommand(mode); err != nil {
 				output.Append(lang.L("connection error") + ": " + err.Error())
