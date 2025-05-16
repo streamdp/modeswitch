@@ -12,7 +12,11 @@ import (
 
 const keySize = 32 // for AES-256
 
-var additionalBytes = []byte("5BUptaMpkopamfjRe5mbSSNds+U0WbRl")
+var (
+	additionalBytes = []byte("5BUptaMpkopamfjRe5mbSSNds+U0WbRl")
+
+	errShortBlockSize = errors.New("ciphertext block size is too short")
+)
 
 func encode(b []byte) string { return base64.StdEncoding.EncodeToString(b) }
 
@@ -22,6 +26,7 @@ func buildSecret(secret string) []byte {
 		s = append(s, additionalBytes...)
 	}
 	s = s[:keySize]
+
 	return s
 }
 
@@ -38,14 +43,17 @@ func Encrypt(text, secret string) (string, error) {
 		return "", err
 	}
 	cipher.NewCFBEncrypter(block, iv).XORKeyStream(cipherText[aes.BlockSize:], plainText)
+
 	return encode(cipherText), nil
 }
 
-func decode(s string) (data []byte, err error) {
-	if data, err = base64.StdEncoding.DecodeString(s); err != nil {
-		return
+func decode(s string) ([]byte, error) {
+	data, err := base64.StdEncoding.DecodeString(s)
+	if err != nil {
+		return nil, err
 	}
-	return
+
+	return data, nil
 }
 
 // Decrypt method is to extract back the encrypted text
@@ -62,11 +70,12 @@ func Decrypt(text, secret string) (string, error) {
 		return "", err
 	}
 	if len(cipherText) < aes.BlockSize {
-		return "", errors.New("ciphertext block size is too short")
+		return "", errShortBlockSize
 	}
 	iv := cipherText[:aes.BlockSize]
 	cipherText = cipherText[aes.BlockSize:]
 	plainText := make([]byte, len(cipherText))
 	cipher.NewCFBDecrypter(block, iv).XORKeyStream(plainText, cipherText)
+
 	return strings.TrimSuffix(string(plainText), encode([]byte(secret))), nil
 }

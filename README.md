@@ -27,3 +27,10 @@ Transfer _./fyne-cross/dist/android/_**Keenetic_Mode_Switch.apk** to the android
 <img width="33%" src="assets/app_screenshot_1.png" alt="main window">
 <img width="33%" src="assets/app_screenshot_2.png" alt="settings window">
 </p>
+
+## Contributing
+Contributions are welcome! If you encounter any issues, have suggestions for new features, or want to improve
+**Keenetic mode switch**, please feel free to open an issue or submit a pull request on the project's GitHub repository.
+
+## License
+**Keenetic mode switch** is released under the _MIT_ License. See the [LICENSE](https://github.com/streamdp/modeswitch/blob/master/LICENSE) file for complete license details.

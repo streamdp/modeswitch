@@ -8,6 +8,7 @@ import (
 	"fyne.io/fyne/v2/app"
 	"github.com/streamdp/modeswitch/encryption"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestUserConfig_Save(t *testing.T) {
@@ -37,13 +38,11 @@ func TestUserConfig_Save(t *testing.T) {
 	}
 
 	for n, tt := range testCases {
-		tt := tt
 		t.Run(strconv.Itoa(n), func(t *testing.T) {
-			err := tt.Save(a)
-			assert.NoError(t, err)
+			require.NoError(t, tt.Save(a))
 
 			decryptedPassword, err := encryption.Decrypt(a.Preferences().String("password"), tt.UserName)
-			assert.NoError(t, err)
+			require.NoError(t, err)
 
 			assert.Equal(t, tt.UserName, a.Preferences().String("username"))
 			assert.Equal(t, tt.Password, decryptedPassword)
@@ -84,12 +83,11 @@ func TestUserConfig_Load(t *testing.T) {
 	}
 
 	for n, tt := range testCases {
-		tt := tt
 		t.Run(strconv.Itoa(n), func(t *testing.T) {
-			assert.NoError(t, tt.Save(a))
+			require.NoError(t, tt.Save(a))
 
 			c := &UserConfig{}
-			assert.NoError(t, c.Load(a))
+			require.NoError(t, c.Load(a))
 
 			assert.Equal(t, c.UserName, tt.UserName)
 			assert.Equal(t, c.Password, tt.Password)
@@ -104,10 +102,10 @@ func TestUserConfig_Load(t *testing.T) {
 }
 
 func TestConstants(t *testing.T) {
-	assert.Equal(t, UMTS, "umts")
-	assert.Equal(t, LTE, "lte")
-	assert.Equal(t, Size, fyne.Size{
+	assert.Equal(t, "umts", UMTS)
+	assert.Equal(t, "lte", LTE)
+	assert.Equal(t, fyne.Size{
 		Width:  240,
 		Height: 480,
-	})
+	}, Size)
 }

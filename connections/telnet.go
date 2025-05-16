@@ -8,7 +8,7 @@ import (
 	"github.com/streamdp/telnet-client"
 )
 
-func SendTelnetCommand(mode string, c *config.UserConfig) (err error) {
+func SendTelnetCommand(mode string, c *config.UserConfig) error {
 	cli := telnet.TelnetClient{
 		Address:  c.Host,
 		Port:     c.Port,
@@ -22,9 +22,8 @@ func SendTelnetCommand(mode string, c *config.UserConfig) (err error) {
 		BannerRe: regexp.MustCompile("\\(config\\)>"),
 	}
 
-	if err = cli.Dial(); err != nil {
-		err = fmt.Errorf("unable to connect:\n%w", err)
-		return
+	if err := cli.Dial(); err != nil {
+		return err
 	}
 	defer cli.Close()
 
@@ -33,12 +32,12 @@ func SendTelnetCommand(mode string, c *config.UserConfig) (err error) {
 		init = c.InitUmts
 	}
 
-	if _, err = cli.Execute(fmt.Sprintf("interface %s lte init %s", c.InterfaceId, init)); err != nil {
-		return
+	if _, err := cli.Execute(fmt.Sprintf("interface %s lte init %s", c.InterfaceId, init)); err != nil {
+		return nil
 	}
-	if _, err = cli.Execute(fmt.Sprintf("interface %s usb acq %s", c.InterfaceId, mode)); err != nil {
-		return
+	if _, err := cli.Execute(fmt.Sprintf("interface %s usb acq %s", c.InterfaceId, mode)); err != nil {
+		return nil
 	}
 
-	return
+	return nil
 }
