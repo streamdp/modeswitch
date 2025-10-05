@@ -88,7 +88,7 @@ func (m *MainWindow) switchButtonFn(mode string, output *widget.Entry) func() {
 				m.showDialogError(fmt.Errorf("%s:\n%w", lang.L("unable to connect"), err))
 			} else {
 				fyne.DoAndWait(func() {
-					output.Append(fmt.Sprintf(lang.L("commands to switch %s mode were sent successfully", mode)))
+					output.Append(fmt.Sprintf(lang.L("commands to switch %s mode were sent successfully"), mode))
 					output.Append("\n" + lang.L("wait few minutes, and check internet connection"))
 				})
 			}

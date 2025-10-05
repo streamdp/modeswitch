@@ -1,7 +1,7 @@
 PATH := $(GOPATH)/bin:$(PATH)
 
 default:
-	fyne-cross android -image fyneio/fyne-cross-images:v1.2.0-android
+	fyne-cross android -image fyneio/fyne-cross-images:v1.3.1-android
 
 clean:
 	rm -rf *.apk
