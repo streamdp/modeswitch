@@ -13,13 +13,13 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
-          go-version: '1.24.2'
+          go-version: '1.25.5'
       - name: Get fyne-cross
         run: go install github.com/fyne-io/fyne-cross@v1.6.1
       - name: Build android app
         env:
           tag: ${{ github.ref_name }}
-        run: fyne-cross android -image fyneio/fyne-cross-images:v1.2.0-android -app-version "${tag#v}"
+        run: fyne-cross android -image fyneio/fyne-cross-images:v1.3.1-android -app-version "${tag#v}"
       - name: Release pushed tag
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
