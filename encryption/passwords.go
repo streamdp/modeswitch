@@ -21,13 +21,12 @@ var (
 func encode(b []byte) string { return base64.StdEncoding.EncodeToString(b) }
 
 func buildSecret(secret string) []byte {
-	var s = []byte(secret)
-	if len(s) < keySize {
-		s = append(s, additionalBytes...)
+	key := make([]byte, keySize)
+	copy(key, secret)
+	if len(secret) < keySize {
+		copy(key[len(secret):], additionalBytes)
 	}
-	s = s[:keySize]
-
-	return s
+	return key
 }
 
 // Encrypt method is to encrypt or hide any classified text
