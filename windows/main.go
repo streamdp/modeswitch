@@ -12,7 +12,9 @@ import (
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/widget"
 	"github.com/streamdp/modeswitch/config"
-	"github.com/streamdp/modeswitch/connections"
+	"github.com/streamdp/modeswitch/device"
+	"github.com/streamdp/modeswitch/pkg/ssh_client"
+	"github.com/streamdp/modeswitch/pkg/telnet_client"
 )
 
 type MainWindow struct {
@@ -68,7 +70,7 @@ func (m *MainWindow) switchButtonFn(mode string, output *widget.Entry) func() {
 
 		if err := m.c.Load(m.a); err != nil {
 			output.Append(lang.L("load config error") + ": " + err.Error())
-			m.showDialogError(err)
+			dialog.ShowError(err, m)
 
 			return
 		}
@@ -76,16 +78,16 @@ func (m *MainWindow) switchButtonFn(mode string, output *widget.Entry) func() {
 		if m.c.Host == "" || m.c.Port == "" || m.c.InterfaceId == "" {
 			errConfig := errors.New(lang.L("you need to configure the app first"))
 			output.Append(lang.L("config error") + ": " + errConfig.Error())
-			m.showDialogError(errConfig)
+			dialog.ShowError(errConfig, m)
 
 			return
 		}
 
 		output.Append(lang.L("trying to connect") + "...\n")
 		go func() {
-			if err := m.sendCommand(mode); err != nil {
+			if err := m.sendSwitchModeCmd(mode); err != nil {
 				fyne.DoAndWait(func() { output.Append(lang.L("connection error") + ": " + err.Error()) })
-				m.showDialogError(fmt.Errorf("%s:\n%w", lang.L("unable to connect"), err))
+				dialog.ShowError(fmt.Errorf("%s:\n%w", lang.L("unable to connect"), err), m)
 			} else {
 				fyne.DoAndWait(func() {
 					output.Append(fmt.Sprintf(lang.L("commands to switch %s mode were sent successfully"), mode))
@@ -96,14 +98,24 @@ func (m *MainWindow) switchButtonFn(mode string, output *widget.Entry) func() {
 	}
 }
 
-func (m *MainWindow) showDialogError(err error) {
-	dialog.ShowError(err, m)
-}
+func (m *MainWindow) sendSwitchModeCmd(mode string) error {
+	var (
+		sender device.Sender
+		err    error
+	)
 
-func (m *MainWindow) sendCommand(mode string) error {
 	if m.c.IsSsh {
-		return connections.SendSshCommand(mode, m.c)
+		if sender, err = ssh_client.New(m.c); err != nil {
+			return err
+		}
+	} else {
+		if sender, err = telnet_client.New(m.c); err != nil {
+			return err
+		}
 	}
+	defer func(sender device.Sender) {
+		_ = sender.Close()
+	}(sender)
 
-	return connections.SendTelnetCommand(mode, m.c)
+	return device.SwitchLTEModemMode(sender, mode, m.c)
 }

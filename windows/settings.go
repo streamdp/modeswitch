@@ -31,7 +31,7 @@ func NewSettingsWindow(a fyne.App) *SettingsWindow {
 
 func (s *SettingsWindow) Create() *SettingsWindow {
 	if err := s.c.Load(s.a); err != nil {
-		s.showDialogError(err)
+		dialog.ShowError(err, s)
 
 		return s
 	}
@@ -91,11 +91,12 @@ func (s *SettingsWindow) Create() *SettingsWindow {
 		s.c.InitLte = initLteEntry.Text
 		s.c.InitUmts = initUmtsEntry.Text
 		if err := s.c.Save(s.a); err != nil {
-			s.showDialogError(err)
+			dialog.ShowError(err, s)
 
 			return
 		}
-		s.showDialogInfo(lang.L("Settings Saved"), lang.L("Settings have been saved"))
+
+		dialog.ShowInformation(lang.L("Settings Saved"), lang.L("Settings have been saved"), s)
 	})
 
 	s.SetContent(
@@ -128,12 +129,4 @@ func (s *SettingsWindow) Create() *SettingsWindow {
 	)
 
 	return s
-}
-
-func (s *SettingsWindow) showDialogError(err error) {
-	dialog.ShowError(err, s)
-}
-
-func (s *SettingsWindow) showDialogInfo(title, msg string) {
-	dialog.ShowInformation(title, msg, s)
 }
