@@ -1,7 +1,6 @@
 package windows
 
 import (
-	"errors"
 	"fmt"
 
 	"fyne.io/fyne/v2"
@@ -12,26 +11,24 @@ import (
 	"fyne.io/fyne/v2/widget"
 	"github.com/streamdp/modeswitch/config"
 	"github.com/streamdp/modeswitch/device"
-	"github.com/streamdp/modeswitch/pkg/ssh_client"
-	"github.com/streamdp/modeswitch/pkg/telnet_client"
 )
 
 type SmsWindow struct {
-	a fyne.App
-	c *config.UserConfig
+	app fyne.App
+	cfg *config.UserConfig
 	fyne.Window
 }
 
-func NewSmsWindow(a fyne.App) *SmsWindow {
+func NewSmsWindow(app fyne.App) *SmsWindow {
 	return &SmsWindow{
-		a: a,
-		c: &config.UserConfig{},
+		app: app,
+		cfg: &config.UserConfig{},
 		Window: func(a fyne.App) fyne.Window {
 			w := a.NewWindow(lang.L("Sms"))
 			w.Resize(config.Size)
 
 			return w
-		}(a),
+		}(app),
 	}
 }
 
@@ -42,7 +39,9 @@ func (s *SmsWindow) Create() *SmsWindow {
 
 	readSms := widget.NewButton(lang.L("Read"), s.runCmdFn(outputMemo,
 		func() {
-			if out, err := s.sendSMSListCmd(device.SmsUnread); err != nil {
+			if out, err := device.SendCmd(s.cfg, func(d *device.Device) ([]byte, error) {
+				return d.SmsList(device.SmsUnread)
+			}); err != nil {
 				fyne.DoAndWait(func() {
 					outputMemo.Append(lang.L("device communication failed") + ": " + err.Error())
 				})
@@ -57,7 +56,11 @@ func (s *SmsWindow) Create() *SmsWindow {
 	))
 	deleteSms := widget.NewButton(lang.L("Delete All"), s.runCmdFn(outputMemo,
 		func() {
-			if err := s.sendDeleteSMSCmd(); err != nil {
+			if _, err := device.SendCmd(s.cfg, func(d *device.Device) ([]byte, error) {
+				_, _ = d.SmsDelete("")
+
+				return nil, nil
+			}); err != nil {
 				fyne.DoAndWait(func() {
 					outputMemo.Append(lang.L("device communication failed") + ": " + err.Error())
 				})
@@ -91,19 +94,8 @@ func (s *SmsWindow) Create() *SmsWindow {
 
 func (s *SmsWindow) runCmdFn(output *widget.Entry, f func()) func() {
 	return func() {
-		output.SetText(lang.L("load config") + "...\n")
-
-		if err := s.c.Load(s.a); err != nil {
-			output.Append(lang.L("load config error") + ": " + err.Error())
+		if err := loadConfig(s.app, s.cfg, output); err != nil {
 			dialog.ShowError(err, s)
-
-			return
-		}
-
-		if s.c.Host == "" || s.c.Port == "" || s.c.InterfaceId == "" {
-			errConfig := errors.New(lang.L("you need to configure the app first"))
-			output.Append(lang.L("config error") + ": " + errConfig.Error())
-			dialog.ShowError(errConfig, s)
 
 			return
 		}
@@ -113,30 +105,4 @@ func (s *SmsWindow) runCmdFn(output *widget.Entry, f func()) func() {
 			f()
 		}()
 	}
-}
-
-func (s *SmsWindow) sendSMSListCmd(args ...string) ([]byte, error) {
-	var (
-		sender device.Sender
-		err    error
-	)
-
-	if s.c.IsSsh {
-		if sender, err = ssh_client.New(s.c); err != nil {
-			return nil, err
-		}
-	} else {
-		if sender, err = telnet_client.New(s.c); err != nil {
-			return nil, err
-		}
-	}
-	defer func(sender device.Sender) {
-		_ = sender.Close()
-	}(sender)
-
-	return device.SmsList(sender, s.c, args...)
-}
-
-func (s *SmsWindow) sendDeleteSMSCmd() error {
-	return fmt.Errorf("unimplemented")
 }

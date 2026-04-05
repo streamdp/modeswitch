@@ -10,22 +10,22 @@ import (
 
 var errWrongInterface = errors.New("wrong interface")
 
-func SwitchLTEModemMode(sender Sender, mode string, c *config.UserConfig) error {
-	var init = c.InitLte
+func (d *Device) SwitchLTEModemMode(mode string) ([]byte, error) {
+	var init = d.cfg.InitLte
 	if mode == config.UMTS {
-		init = c.InitUmts
+		init = d.cfg.InitUmts
 	}
-	output, err := sender.Send(
-		fmt.Sprintf("interface %s lte init %s", c.InterfaceId, init),
-		fmt.Sprintf("interface %s usb acq %s", c.InterfaceId, mode),
+	output, err := d.sender.Send(
+		fmt.Sprintf("interface %s lte init %s", d.cfg.InterfaceId, init),
+		fmt.Sprintf("interface %s usb acq %s", d.cfg.InterfaceId, mode),
 	)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if bytes.Contains(output, []byte("Interface error")) {
-		return errWrongInterface
+		return nil, errWrongInterface
 	}
 
-	return nil
+	return output, nil
 }

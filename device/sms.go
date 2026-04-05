@@ -3,8 +3,6 @@ package device
 import (
 	"bytes"
 	"fmt"
-
-	"github.com/streamdp/modeswitch/config"
 )
 
 const (
@@ -18,14 +16,14 @@ const (
 //	    unread - Show a list of unread SMS messages only.
 //		id - Show message with the given identifier.
 //		no-content - Disable message text output.
-func SmsList(sender Sender, c *config.UserConfig, args ...string) ([]byte, error) {
-	var cmd = fmt.Sprintf("sms %s list", c.InterfaceId)
+func (d *Device) SmsList(args ...string) ([]byte, error) {
+	var cmd = fmt.Sprintf("sms %s list", d.cfg.InterfaceId)
 
 	for _, arg := range args {
 		cmd += " " + arg
 	}
 
-	out, err := sender.Send(cmd)
+	out, err := d.sender.Send(cmd)
 	if err != nil {
 		return nil, err
 	}
@@ -34,9 +32,9 @@ func SmsList(sender Sender, c *config.UserConfig, args ...string) ([]byte, error
 }
 
 // SmsDelete - Delete SMS message.
-func SmsDelete(sender Sender, c *config.UserConfig, id string) (bool, error) {
-	out, err := sender.Send(
-		fmt.Sprintf("sms %s delete %s", c.InterfaceId, id),
+func (d *Device) SmsDelete(id string) (bool, error) {
+	out, err := d.sender.Send(
+		fmt.Sprintf("sms %s delete %s", d.cfg.InterfaceId, id),
 	)
 	if err != nil {
 		return false, err
@@ -46,9 +44,9 @@ func SmsDelete(sender Sender, c *config.UserConfig, id string) (bool, error) {
 }
 
 // SmsRead - Mark SMS as read.
-func SmsRead(sender Sender, c *config.UserConfig, id string) (bool, error) {
-	out, err := sender.Send(
-		fmt.Sprintf("sms %s read %s", c.InterfaceId, id),
+func (d *Device) SmsRead(id string) (bool, error) {
+	out, err := d.sender.Send(
+		fmt.Sprintf("sms %s read %s", d.cfg.InterfaceId, id),
 	)
 	if err != nil {
 		return false, err
@@ -60,9 +58,9 @@ func SmsRead(sender Sender, c *config.UserConfig, id string) (bool, error) {
 // SmsSend - Send SMS to specified number. The maximum value of saved incoming SMS
 // messages in the router's memory is 128. If the memory is full, the oldest SMS
 // from the memory will be automatically deleted when a new SMS is received.
-func SmsSend(sender Sender, c *config.UserConfig, to, msg string) (bool, error) {
-	out, err := sender.Send(
-		fmt.Sprintf("sms %s send %s %s", c.InterfaceId, to, msg),
+func (d *Device) SmsSend(to, msg string) (bool, error) {
+	out, err := d.sender.Send(
+		fmt.Sprintf("sms %s send %s %s", d.cfg.InterfaceId, to, msg),
 	)
 	if err != nil {
 		return false, err
