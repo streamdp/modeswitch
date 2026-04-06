@@ -52,7 +52,7 @@ func (s *SmsWindow) Create() *SmsWindow {
 			}
 
 			fyne.DoAndWait(func() {
-				outputMemo.Append(fmt.Sprintf(lang.L("Unread SMS") + ": "))
+				outputMemo.Append(lang.L("Unread SMS") + ": ")
 
 				for _, msg := range resp.SMS.Messages {
 					outputMemo.Append(fmt.Sprintf("\n%v\n", msg.String()))

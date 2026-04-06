@@ -6,7 +6,7 @@ import (
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
-	"github.com/streamdp/modeswitch/encryption"
+	"github.com/streamdp/modeswitch/internal/pkg/encryption"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -41,7 +41,10 @@ func TestUserConfig_Save(t *testing.T) {
 		t.Run(strconv.Itoa(n), func(t *testing.T) {
 			require.NoError(t, tt.Save(a))
 
-			decryptedPassword, err := encryption.Decrypt(a.Preferences().String("password"), tt.UserName)
+			decryptedPassword, err := encryption.Decrypt(
+				a.Preferences().String("password"),
+				a.Preferences().String("salt"),
+			)
 			require.NoError(t, err)
 
 			assert.Equal(t, tt.UserName, a.Preferences().String("username"))
