@@ -89,7 +89,7 @@ func (s *SmsWindow) Create() *SmsWindow {
 			}
 
 			fyne.DoAndWait(func() {
-				outputMemo.Append(lang.L("SMS has been successfully deleted"))
+				outputMemo.Append("\n" + lang.L("SMS has been successfully deleted"))
 			})
 		},
 	))

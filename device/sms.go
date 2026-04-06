@@ -3,7 +3,6 @@ package device
 import (
 	"bufio"
 	"bytes"
-	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -75,6 +74,10 @@ func (d *Device) SmsDelete(id string) (*Response, error) {
 		return nil, err
 	}
 
+	if err = errorLookup(out); err != nil {
+		return nil, err
+	}
+
 	return &Response{Text: string(out)}, nil
 }
 
@@ -84,6 +87,10 @@ func (d *Device) SmsRead(id string) (*Response, error) {
 		fmt.Sprintf("sms %s read %s", d.cfg.InterfaceId, id),
 	)
 	if err != nil {
+		return nil, err
+	}
+
+	if err = errorLookup(out); err != nil {
 		return nil, err
 	}
 
@@ -101,14 +108,11 @@ func (d *Device) SmsSend(to, msg string) (*Response, error) {
 		return nil, err
 	}
 
-	return &Response{Text: string(out)}, nil
-}
-
-func errorLookup(raw []byte) error {
-	if i := bytes.Index(raw, []byte("Command::Base error")); i != -1 {
-		return errors.New(string(raw[i:]))
+	if err = errorLookup(out); err != nil {
+		return nil, err
 	}
-	return nil
+
+	return &Response{Text: string(out)}, nil
 }
 
 func parseSMSBytes(raw []byte) *SMSData {
