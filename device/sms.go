@@ -62,6 +62,8 @@ func (d *Device) SmsList(args ...string) (*Response, error) {
 		return nil, err
 	}
 
+	_, _ = d.sender.Send("exit")
+
 	return &Response{SMS: parseSMSBytes(out)}, nil
 }
 
@@ -78,6 +80,8 @@ func (d *Device) SmsDelete(id string) (*Response, error) {
 		return nil, err
 	}
 
+	_, _ = d.sender.Send("exit")
+
 	return &Response{Text: string(out)}, nil
 }
 
@@ -93,6 +97,8 @@ func (d *Device) SmsRead(id string) (*Response, error) {
 	if err = errorLookup(out); err != nil {
 		return nil, err
 	}
+
+	_, _ = d.sender.Send("exit")
 
 	return &Response{Text: string(out)}, nil
 }
@@ -111,6 +117,8 @@ func (d *Device) SmsSend(to, msg string) (*Response, error) {
 	if err = errorLookup(out); err != nil {
 		return nil, err
 	}
+
+	_, _ = d.sender.Send("exit")
 
 	return &Response{Text: string(out)}, nil
 }

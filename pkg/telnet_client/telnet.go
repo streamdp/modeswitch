@@ -35,20 +35,13 @@ func New(c *config.UserConfig) (*client, error) {
 	}, nil
 }
 
-func (c *client) Send(command ...string) ([]byte, error) {
-	var output []byte
-
-	for _, cmd := range command {
-		out, err := c.cli.Execute(cmd)
-		if err != nil {
-			return nil, err
-		}
-		if out != nil {
-			output = append(output, out...)
-		}
+func (c *client) Send(cmd string) ([]byte, error) {
+	out, err := c.cli.Execute(cmd)
+	if err != nil {
+		return nil, err
 	}
 
-	return bytes.ReplaceAll(output, []byte{27, 91, 75}, nil), nil
+	return bytes.ReplaceAll(out, []byte{27, 91, 75}, nil), nil
 }
 
 func (c *client) Close() error {

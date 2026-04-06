@@ -1,10 +1,11 @@
 package config
 
 import (
+	"crypto/rand"
 	"time"
 
 	"fyne.io/fyne/v2"
-	"github.com/streamdp/modeswitch/encryption"
+	"github.com/streamdp/modeswitch/pkg/encryption"
 )
 
 const (
@@ -31,12 +32,17 @@ type UserConfig struct {
 }
 
 func (uc *UserConfig) Save(a fyne.App) error {
+	salt := a.Preferences().String("salt")
+	if salt == "" {
+		salt = rand.Text()
+	}
+
 	a.Preferences().SetString("host", uc.Host)
 	a.Preferences().SetString("port", uc.Port)
 	a.Preferences().SetBool("is_ssh", uc.IsSsh)
 	a.Preferences().SetString("username", uc.UserName)
 
-	password, err := encryption.Encrypt(uc.Password, uc.UserName)
+	password, err := encryption.Encrypt(uc.Password, salt)
 	if err != nil {
 		return err
 	}
@@ -45,6 +51,7 @@ func (uc *UserConfig) Save(a fyne.App) error {
 	a.Preferences().SetString("init_lte", uc.InitLte)
 	a.Preferences().SetString("init_umts", uc.InitUmts)
 	a.Preferences().SetString("interface_id", uc.InterfaceId)
+	a.Preferences().SetString("salt", salt)
 
 	return nil
 }
@@ -52,7 +59,10 @@ func (uc *UserConfig) Save(a fyne.App) error {
 func (uc *UserConfig) Load(a fyne.App) error {
 	uc.UserName = a.Preferences().String("username")
 
-	password, err := encryption.Decrypt(a.Preferences().String("password"), uc.UserName)
+	password, err := encryption.Decrypt(
+		a.Preferences().String("password"),
+		a.Preferences().String("salt"),
+	)
 	if err != nil {
 		return err
 	}

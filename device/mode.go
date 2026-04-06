@@ -11,17 +11,27 @@ func (d *Device) SwitchLTEModemMode(mode string) (*Response, error) {
 	if mode == config.UMTS {
 		init = d.cfg.InitUmts
 	}
-	out, err := d.sender.Send(
+
+	var output []byte
+	for _, cmd := range []string{
 		fmt.Sprintf("interface %s lte init %s", d.cfg.InterfaceId, init),
 		fmt.Sprintf("interface %s usb acq %s", d.cfg.InterfaceId, mode),
-	)
-	if err != nil {
-		return nil, err
+		"system configuration save",
+		"exit",
+	} {
+		out, err := d.sender.Send(cmd)
+		if err != nil {
+			return nil, err
+		}
+
+		if err = errorLookup(out); err != nil {
+			return nil, err
+		}
+
+		if out != nil {
+			output = append(output, out...)
+		}
 	}
 
-	if err = errorLookup(out); err != nil {
-		return nil, err
-	}
-
-	return &Response{Text: string(out)}, nil
+	return &Response{Text: string(output)}, nil
 }
