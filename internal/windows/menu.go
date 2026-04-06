@@ -3,7 +3,7 @@ package windows
 import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/lang"
-	"github.com/streamdp/modeswitch/config"
+	"github.com/streamdp/modeswitch/internal/config"
 )
 
 func CreateMainMenu(a fyne.App) *fyne.MainMenu {

@@ -3,7 +3,7 @@ package device
 import (
 	"fmt"
 
-	"github.com/streamdp/modeswitch/config"
+	"github.com/streamdp/modeswitch/internal/config"
 )
 
 func (d *Device) SwitchLTEModemMode(mode string) (*Response, error) {

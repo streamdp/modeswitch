@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"fyne.io/fyne/v2"
-	"github.com/streamdp/modeswitch/pkg/encryption"
+	"github.com/streamdp/modeswitch/internal/pkg/encryption"
 )
 
 const (

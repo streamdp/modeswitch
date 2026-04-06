@@ -9,8 +9,8 @@ import (
 	"fyne.io/fyne/v2/lang"
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/widget"
-	"github.com/streamdp/modeswitch/config"
-	"github.com/streamdp/modeswitch/device"
+	"github.com/streamdp/modeswitch/internal/config"
+	device2 "github.com/streamdp/modeswitch/internal/pkg/device"
 )
 
 type SmsWindow struct {
@@ -35,17 +35,18 @@ func NewSmsWindow(app fyne.App) *SmsWindow {
 func (s *SmsWindow) Create() *SmsWindow {
 	outputMemo := widget.NewMultiLineEntry()
 	outputMemo.Wrapping = fyne.TextWrapWord
+	outputMemo.Disable()
 
 	readSms := widget.NewButton(lang.L("Read"), s.runCmdFn(outputMemo,
 		func() {
-			resp, err := device.SendCmd(s.cfg, func(d *device.Device) (*device.Response, error) {
-				return d.SmsList(device.SmsUnread)
+			resp, err := device2.SendCmd(s.cfg, func(d *device2.Device) (*device2.Response, error) {
+				return d.SmsList(device2.SmsUnread)
 			})
 			if err != nil {
 				fyne.DoAndWait(func() {
 					outputMemo.Append(lang.L("device communication failed") + ": " + err.Error())
+					dialog.ShowError(fmt.Errorf("%s:\n%w", lang.L("failed to send commands"), err), s)
 				})
-				dialog.ShowError(fmt.Errorf("%s:\n%w", lang.L("failed to send commands"), err), s)
 
 				return
 			}
@@ -61,8 +62,8 @@ func (s *SmsWindow) Create() *SmsWindow {
 	))
 	deleteSms := widget.NewButton(lang.L("Delete All"), s.runCmdFn(outputMemo,
 		func() {
-			_, err := device.SendCmd(s.cfg, func(d *device.Device) (*device.Response, error) {
-				resp, err := d.SmsList(device.SmsNoContent)
+			_, err := device2.SendCmd(s.cfg, func(d *device2.Device) (*device2.Response, error) {
+				resp, err := d.SmsList(device2.SmsNoContent)
 				if err != nil {
 					return nil, err
 				}
@@ -82,8 +83,8 @@ func (s *SmsWindow) Create() *SmsWindow {
 			if err != nil {
 				fyne.DoAndWait(func() {
 					outputMemo.Append(lang.L("device communication failed") + ": " + err.Error())
+					dialog.ShowError(fmt.Errorf("%s:\n%w", lang.L("failed to send commands"), err), s)
 				})
-				dialog.ShowError(fmt.Errorf("%s:\n%w", lang.L("failed to send commands"), err), s)
 
 				return
 			}

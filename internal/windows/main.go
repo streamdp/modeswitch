@@ -11,8 +11,8 @@ import (
 	"fyne.io/fyne/v2/lang"
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/widget"
-	"github.com/streamdp/modeswitch/config"
-	"github.com/streamdp/modeswitch/device"
+	"github.com/streamdp/modeswitch/internal/config"
+	"github.com/streamdp/modeswitch/internal/pkg/device"
 )
 
 var errConfig = errors.New(lang.L("you need to configure the app first"))
@@ -39,7 +39,7 @@ func NewMainWindow(app fyne.App) *MainWindow {
 func (m *MainWindow) Create() *MainWindow {
 	outputMemo := widget.NewMultiLineEntry()
 	outputMemo.Wrapping = fyne.TextWrapWord
-	// outputMemo.Disable()
+	outputMemo.Disable()
 
 	switchToLteButton := widget.NewButton(lang.L("Switch to LTE"), m.switchModemModeFn(config.LTE, outputMemo))
 	switchToUMTSButton := widget.NewButton(lang.L("Switch to UMTS"), m.switchModemModeFn(config.UMTS, outputMemo))
@@ -78,8 +78,10 @@ func (m *MainWindow) switchModemModeFn(mode string, output *widget.Entry) func()
 				return d.SwitchLTEModemMode(mode)
 			})
 			if err != nil {
-				fyne.DoAndWait(func() { output.Append(lang.L("device communication failed") + ": " + err.Error()) })
-				dialog.ShowError(fmt.Errorf("%s:\n%w", lang.L("failed to send commands"), err), m)
+				fyne.DoAndWait(func() {
+					output.Append(lang.L("device communication failed") + ": " + err.Error())
+					dialog.ShowError(fmt.Errorf("%s:\n%w", lang.L("failed to send commands"), err), m)
+				})
 
 				return
 			}

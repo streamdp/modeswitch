@@ -4,7 +4,7 @@ import (
 	"net"
 
 	"github.com/helloyi/go-sshclient"
-	"github.com/streamdp/modeswitch/config"
+	"github.com/streamdp/modeswitch/internal/config"
 	"golang.org/x/crypto/ssh"
 )
 

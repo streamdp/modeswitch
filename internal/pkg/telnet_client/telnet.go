@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"regexp"
 
-	"github.com/streamdp/modeswitch/config"
+	"github.com/streamdp/modeswitch/internal/config"
 	"github.com/streamdp/telnet-client"
 )
 

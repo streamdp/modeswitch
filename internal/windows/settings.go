@@ -7,7 +7,7 @@ import (
 	"fyne.io/fyne/v2/lang"
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/widget"
-	"github.com/streamdp/modeswitch/config"
+	"github.com/streamdp/modeswitch/internal/config"
 )
 
 type SettingsWindow struct {

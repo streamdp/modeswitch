@@ -1,9 +1,9 @@
 package device
 
 import (
-	"github.com/streamdp/modeswitch/config"
-	"github.com/streamdp/modeswitch/pkg/ssh_client"
-	"github.com/streamdp/modeswitch/pkg/telnet_client"
+	"github.com/streamdp/modeswitch/internal/config"
+	"github.com/streamdp/modeswitch/internal/pkg/ssh_client"
+	"github.com/streamdp/modeswitch/internal/pkg/telnet_client"
 )
 
 type Sender interface {
