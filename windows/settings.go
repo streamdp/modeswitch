@@ -108,7 +108,7 @@ func (s *SettingsWindow) Create() *SettingsWindow {
 					hostEntry,
 					widget.NewLabel(lang.L("Port")+":"),
 					portEntry,
-					widget.NewLabel(lang.L("Ssh")+":"),
+					widget.NewLabel(lang.L("SSH")+":"),
 					isSshCheckBox,
 					widget.NewLabel(lang.L("Username")+":"),
 					usernameEntry,

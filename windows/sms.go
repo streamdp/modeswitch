@@ -24,7 +24,7 @@ func NewSmsWindow(app fyne.App) *SmsWindow {
 		app: app,
 		cfg: &config.UserConfig{},
 		Window: func(a fyne.App) fyne.Window {
-			w := a.NewWindow(lang.L("Sms"))
+			w := a.NewWindow(lang.L("SMS"))
 			w.Resize(config.Size)
 
 			return w
@@ -35,41 +35,62 @@ func NewSmsWindow(app fyne.App) *SmsWindow {
 func (s *SmsWindow) Create() *SmsWindow {
 	outputMemo := widget.NewMultiLineEntry()
 	outputMemo.Wrapping = fyne.TextWrapWord
-	outputMemo.Disable()
 
 	readSms := widget.NewButton(lang.L("Read"), s.runCmdFn(outputMemo,
 		func() {
-			if out, err := device.SendCmd(s.cfg, func(d *device.Device) ([]byte, error) {
+			resp, err := device.SendCmd(s.cfg, func(d *device.Device) (*device.Response, error) {
 				return d.SmsList(device.SmsUnread)
-			}); err != nil {
+			})
+			if err != nil {
 				fyne.DoAndWait(func() {
 					outputMemo.Append(lang.L("device communication failed") + ": " + err.Error())
 				})
 				dialog.ShowError(fmt.Errorf("%s:\n%w", lang.L("failed to send commands"), err), s)
-			} else {
-				fyne.DoAndWait(func() {
-					outputMemo.Append(fmt.Sprintf(lang.L("Unread SMS") + ": "))
-					outputMemo.Append("\n" + string(out))
-				})
+
+				return
 			}
+
+			fyne.DoAndWait(func() {
+				outputMemo.Append(fmt.Sprintf(lang.L("Unread SMS") + ": "))
+
+				for _, msg := range resp.SMS.Messages {
+					outputMemo.Append(fmt.Sprintf("\n%v\n", msg.String()))
+				}
+			})
 		},
 	))
 	deleteSms := widget.NewButton(lang.L("Delete All"), s.runCmdFn(outputMemo,
 		func() {
-			if _, err := device.SendCmd(s.cfg, func(d *device.Device) ([]byte, error) {
-				_, _ = d.SmsDelete("")
+			_, err := device.SendCmd(s.cfg, func(d *device.Device) (*device.Response, error) {
+				resp, err := d.SmsList(device.SmsNoContent)
+				if err != nil {
+					return nil, err
+				}
+
+				for _, msg := range resp.SMS.Messages {
+					resp, err = d.SmsDelete(msg.ID)
+					if err != nil {
+						return nil, err
+					}
+					if resp.Text != "" {
+						fyne.DoAndWait(func() { outputMemo.Append(resp.Text) })
+					}
+				}
 
 				return nil, nil
-			}); err != nil {
+			})
+			if err != nil {
 				fyne.DoAndWait(func() {
 					outputMemo.Append(lang.L("device communication failed") + ": " + err.Error())
 				})
 				dialog.ShowError(fmt.Errorf("%s:\n%w", lang.L("failed to send commands"), err), s)
-			} else {
-				fyne.DoAndWait(func() {
-					outputMemo.Append(lang.L("SMS has been successfully deleted"))
-				})
+
+				return
 			}
+
+			fyne.DoAndWait(func() {
+				outputMemo.Append(lang.L("SMS has been successfully deleted"))
+			})
 		},
 	))
 

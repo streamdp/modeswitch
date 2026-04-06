@@ -28,10 +28,18 @@
   "Settings have been saved": "Налады былі захаваны",
   "Host": "Хост",
   "Port": "Порт",
-  "Ssh": "Ssh",
+  "SSH": "SSH",
   "Username": "Імя карыстальніка",
   "Password": "Пароль",
   "Interface": "Інтэрфейс",
   "Init LTE": "Радок LTE",
-  "Init UMTS": "Радок UMTS"
+  "Init UMTS": "Радок UMTS",
+  "device communication failed": "збой сувязі з прыладай",
+  "failed to send commands": "не ўдалося адправіць каманды",
+  "Unread SMS": "Непрачытаныя SMS",
+  "SMS": "SMS",
+  "Read": "Чытаць",
+  "Delete All": "Выдаліць усё",
+  "SMS has been successfully deleted": "SMS былі паспяхова выдалены",
+  "Close": "Закрыць"
 }

@@ -11,7 +11,12 @@ type Sender interface {
 	Close() error
 }
 
-type cmdFn func(d *Device) ([]byte, error)
+type Response struct {
+	Text string `json:"text"`
+	SMS  *SMSData
+}
+
+type cmdFn func(d *Device) (*Response, error)
 
 type Device struct {
 	sender Sender
@@ -44,7 +49,7 @@ func (d *Device) Close() error {
 	return d.sender.Close()
 }
 
-func SendCmd(cfg *config.UserConfig, f cmdFn) ([]byte, error) {
+func SendCmd(cfg *config.UserConfig, f cmdFn) (*Response, error) {
 	d, err := New(cfg)
 	if err != nil {
 		return nil, err

@@ -28,10 +28,18 @@
   "Settings have been saved": "Settings have been saved",
   "Host": "Host",
   "Port": "Port",
-  "Ssh": "Ssh",
+  "SSH": "SSH",
   "Username": "Username",
   "Password": "Password",
   "Interface": "Interface",
   "Init LTE": "Init LTE",
-  "Init UMTS": "Init UMTS"
+  "Init UMTS": "Init UMTS",
+  "device communication failed": "device communication failed",
+  "failed to send commands": "failed to send commands",
+  "Unread SMS": "Unread SMS",
+  "SMS": "SMS",
+  "Read": "Read",
+  "Delete All": "Delete All",
+  "SMS has been successfully deleted": "SMS has been successfully deleted",
+  "Close": "Close"
 }

@@ -10,7 +10,7 @@ import (
 
 var errWrongInterface = errors.New("wrong interface")
 
-func (d *Device) SwitchLTEModemMode(mode string) ([]byte, error) {
+func (d *Device) SwitchLTEModemMode(mode string) (*Response, error) {
 	var init = d.cfg.InitLte
 	if mode == config.UMTS {
 		init = d.cfg.InitUmts
@@ -27,5 +27,5 @@ func (d *Device) SwitchLTEModemMode(mode string) ([]byte, error) {
 		return nil, errWrongInterface
 	}
 
-	return output, nil
+	return &Response{Text: string(output)}, nil
 }

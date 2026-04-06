@@ -28,10 +28,18 @@
   "Settings have been saved": "Налаштування було збережено",
   "Host": "Хост",
   "Port": "Порт",
-  "Ssh": "Ssh",
+  "SSH": "SSH",
   "Username": "Ім'я користувача",
   "Password": "Пароль",
   "Interface": "Інтерфейс",
   "Init LTE": "Рядок LTE",
-  "Init UMTS": "Рядок UMTS"
+  "Init UMTS": "Рядок UMTS",
+  "device communication failed": "збій зв'язку з пристроєм",
+  "failed to send commands": "не вдалося надіслати команди",
+  "Unread SMS": "Непрочитані SMS",
+  "SMS": "SMS",
+  "Read": "Читати",
+  "Delete All": "Видалити все",
+  "SMS has been successfully deleted": "SMS були успішно видалені",
+  "Close": "Закрити"
 }

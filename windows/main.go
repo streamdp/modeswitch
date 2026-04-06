@@ -39,7 +39,7 @@ func NewMainWindow(app fyne.App) *MainWindow {
 func (m *MainWindow) Create() *MainWindow {
 	outputMemo := widget.NewMultiLineEntry()
 	outputMemo.Wrapping = fyne.TextWrapWord
-	outputMemo.Disable()
+	// outputMemo.Disable()
 
 	switchToLteButton := widget.NewButton(lang.L("Switch to LTE"), m.switchModemModeFn(config.LTE, outputMemo))
 	switchToUMTSButton := widget.NewButton(lang.L("Switch to UMTS"), m.switchModemModeFn(config.UMTS, outputMemo))
@@ -74,17 +74,20 @@ func (m *MainWindow) switchModemModeFn(mode string, output *widget.Entry) func()
 
 		output.Append(lang.L("trying to connect") + "...\n")
 		go func() {
-			if _, err := device.SendCmd(m.cfg, func(d *device.Device) ([]byte, error) {
+			_, err := device.SendCmd(m.cfg, func(d *device.Device) (*device.Response, error) {
 				return d.SwitchLTEModemMode(mode)
-			}); err != nil {
-				fyne.DoAndWait(func() { output.Append(lang.L("connection error") + ": " + err.Error()) })
-				dialog.ShowError(fmt.Errorf("%s:\n%w", lang.L("unable to connect"), err), m)
-			} else {
-				fyne.DoAndWait(func() {
-					output.Append(fmt.Sprintf(lang.L("commands to switch %s mode were sent successfully"), mode))
-					output.Append("\n" + lang.L("wait few minutes, and check internet connection"))
-				})
+			})
+			if err != nil {
+				fyne.DoAndWait(func() { output.Append(lang.L("device communication failed") + ": " + err.Error()) })
+				dialog.ShowError(fmt.Errorf("%s:\n%w", lang.L("failed to send commands"), err), m)
+
+				return
 			}
+
+			fyne.DoAndWait(func() {
+				output.Append(fmt.Sprintf(lang.L("commands to switch %s mode were sent successfully"), mode))
+				output.Append("\n" + lang.L("wait few minutes, and check internet connection"))
+			})
 		}()
 	}
 }
