@@ -52,6 +52,7 @@ func (uc *UserConfig) Save(a fyne.App) error {
 	a.Preferences().SetString("init_umts", uc.InitUmts)
 	a.Preferences().SetString("interface_id", uc.InterfaceId)
 	a.Preferences().SetString("salt", salt)
+	a.Preferences().SetInt("encryption_version", 2)
 
 	return nil
 }
@@ -59,9 +60,14 @@ func (uc *UserConfig) Save(a fyne.App) error {
 func (uc *UserConfig) Load(a fyne.App) error {
 	uc.UserName = a.Preferences().String("username")
 
+	salt := a.Preferences().String("salt")
+	if a.Preferences().Int("encryption_version") < 2 {
+		salt = a.Preferences().String("username")
+	}
+
 	password, err := encryption.Decrypt(
 		a.Preferences().String("password"),
-		a.Preferences().String("salt"),
+		salt,
 	)
 	if err != nil {
 		return err
