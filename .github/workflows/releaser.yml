@@ -13,7 +13,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
-          go-version: '1.25.5'
+          go-version: '1.26.10'
       - name: Get fyne-cross
         run: go install github.com/fyne-io/fyne-cross@v1.6.1
       - name: Build android app

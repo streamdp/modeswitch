@@ -47,13 +47,14 @@ func (m *Message) String() string {
 //		id - Show message with the given identifier.
 //		no-content - Disable message text output.
 func (d *Device) SmsList(args ...string) (*Response, error) {
-	var cmd = fmt.Sprintf("sms %s list", d.cfg.InterfaceId)
+	var cmd strings.Builder
+	cmd.WriteString(fmt.Sprintf("sms %s list", d.cfg.InterfaceId))
 
 	for _, arg := range args {
-		cmd += " " + arg
+		cmd.WriteString(" " + arg)
 	}
 
-	out, err := d.sender.Send(cmd)
+	out, err := d.sender.Send(cmd.String())
 	if err != nil {
 		return nil, err
 	}
